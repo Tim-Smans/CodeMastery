@@ -1,0 +1,140 @@
+generator client {
+  provider = "prisma-client-js"
+  binaryTargets = ["native", "rhel-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  username  String     @db.VarChar(255)
+  email     String     @unique @db.VarChar(255)
+  password  String     @db.VarChar(255)
+  roleId    String     @db.Uuid
+  createdAt DateTime   @default(now()) @db.Timestamp(6)
+  updatedAt DateTime   @updatedAt @db.Timestamp(6)
+  score     Int        @default(0)
+  streak    Int        @default(0)
+  accuracy  Float      @default(0)
+  badge     String     @default("Rookie")
+  avatar    String?    @db.VarChar(500)
+  exercises Exercise[] @relation("CreatedExercises")
+  feedback  Feedback[] @relation("AdminFeedback")
+  results   Result[]
+  sessions  Session[]
+  role      Role       @relation(fields: [roleId], references: [id], onDelete: Cascade)
+  completedExercises CompletedExercise[]
+}
+
+model Session {
+  id          String   @id @unique @db.VarChar
+  userId      String   @db.Uuid
+  activeFrom  DateTime @default(now())
+  activeUntil DateTime @default(dbgenerated("(CURRENT_TIMESTAMP + '1 day'::interval)"))
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Exercise {
+  id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String             @db.VarChar(255)
+  description String
+  difficulty  Difficulty         @default(EASY)
+  createdBy   String             @db.Uuid
+  startCode   StartCode[]
+  createdAt   DateTime           @default(now()) @db.Timestamp(6)
+  updatedAt   DateTime           @updatedAt @db.Timestamp(6)
+  creator     User               @relation("CreatedExercises", fields: [createdBy], references: [id], onDelete: Cascade)
+  categories  Category[]
+  results     Result[]
+  testCases   TestCase[]
+  completedBy CompletedExercise[]
+  hints       Hints[]
+}
+
+model Hints {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  content    String
+  exerciseId String   @db.Uuid
+  exercise   Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+}
+
+model StartCode{
+  id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  code        String
+  type        CodeType           @default(JAVASCRIPT)
+  exerciseId  String             @db.Uuid
+  exercise    Exercise           @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+}
+
+model CompletedExercise {
+  id          String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId      String             @db.Uuid
+  exerciseId  String             @db.Uuid
+  completedAt DateTime           @default(now()) @db.Timestamp(6)
+  user        User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  exercise    Exercise           @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+
+  // Zorgt ervoor dat een user een specifieke oefening slechts één keer kan completeren
+  @@unique([userId, exerciseId]) 
+}
+
+model TestCase {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  exerciseId     String?         @db.Uuid
+  input          String
+  expectedOutput String
+  createdAt      DateTime        @default(now()) @db.Timestamp(6)
+  exercise       Exercise?       @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+}
+
+model Result {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId         String          @db.Uuid
+  exerciseId     String          @db.Uuid
+  score          Int
+  submittedCode  String?
+  submissionDate DateTime        @default(now()) @db.Timestamp(6)
+  feedbacks      Feedback[]
+  exercise       Exercise        @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  user           User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name           String          @unique @db.VarChar(255)
+  description    String?
+  exercises      Exercise[]
+}
+
+
+model Feedback {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  resultId  String   @db.Uuid
+  adminId   String   @db.Uuid
+  comment   String
+  createdAt DateTime @default(now()) @db.Timestamp(6)
+  admin     User     @relation("AdminFeedback", fields: [adminId], references: [id], onDelete: Cascade)
+  result    Result   @relation(fields: [resultId], references: [id], onDelete: Cascade)
+}
+
+model Role {
+  id    String @id @db.Uuid
+  name  String @unique
+  users User[]
+}
+
+enum Difficulty {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum CodeType {
+  HTML
+  JAVASCRIPT
+  TYPESCRIPT
+  CSS
+}
