@@ -42,7 +42,7 @@ export const seedDev = async (prisma: PrismaClient) => {
     },
   });
 
-  const [studentUser1, studentUser2] = await Promise.all([
+  const [studentUser1] = await Promise.all([
     prisma.user.create({
       data: {
         username: 'student1',

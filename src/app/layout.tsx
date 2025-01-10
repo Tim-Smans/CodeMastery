@@ -13,7 +13,7 @@ const RootLayout: FunctionComponent<PropsWithChildren> = ({ children }) => {
       <head>
         <title>CodeMastery</title>
       </head>
-      <body className="min-h-screen flex flex-col items-center justify-center">
+      <body className="min-h-screen flex flex-col items-center justify-center m-2">
         <main className="w-full flex-1">
           {children}
           <Toaster />

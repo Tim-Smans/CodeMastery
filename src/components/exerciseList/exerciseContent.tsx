@@ -31,10 +31,10 @@ const ExerciseContent: FC<Props> = ({exercise}) => {
           <h2 className="text-lg font-semibold mb-2">Start codes:</h2>
           {
             exercise.startCode.map((startCode, i) => (
-              <>
+              <div key={'o' + i}>
                 <p key={i}>{startCode.type}</p>
-                <StartCodeDisplay key={i} code={startCode.code} />
-              </>
+                <StartCodeDisplay key={'e' + i} code={startCode.code} />
+              </div>
             ))
           }
         </div>
