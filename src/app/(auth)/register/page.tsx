@@ -15,9 +15,9 @@ const RegisterPage = async () => {
   const profile = await getSessionProfile();
   const admin = await isAdmin();
     return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col justify-center items-center">
+      <main className="flex-1 w-full max-w-screen-xl">
       <SiteHeader profile={profile as Profile} isAdmin={admin}/>
-      <main className="flex-1">
         <div className="container flex h-full items-center justify-center py-12">
           <div className="w-full max-w-md space-y-6">
             <div className="flex flex-col space-y-2 text-center">
