@@ -30,7 +30,7 @@ const StartCodePopup: FC<Props> = ({startCode}) => {
               </div>
             </div>
             <div className="grid  items-center gap-4">
-              <CodeEditor readOnly language={startCode.type} defaultValue={startCode.code} className="w-full"/>
+              <CodeEditor readOnly language={startCode.type} defaultValue={startCode.code} width="100%"/>
             </div>
           </div>
         </DialogContent>
