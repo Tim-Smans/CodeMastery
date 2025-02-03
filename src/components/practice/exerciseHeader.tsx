@@ -5,7 +5,7 @@ import Link from "next/link"
 
 const ExerciseHeader: FC = () => {
     return (
-        <header className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-4 px-6 flex items-center justify-between">
+        <header className="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-4 px-6 flex items-center justify-between m-1">
           <Link href="/" className="flex items-center space-x-2 group">
             <div className="relative">
               <div className="absolute inset-0 bg-white rounded-full opacity-25 group-hover:opacity-50 transition-opacity"></div>

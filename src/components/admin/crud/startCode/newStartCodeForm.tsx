@@ -117,6 +117,7 @@
                                 language={selectedType == null ? "JAVASCRIPT" : selectedType}
                                 className="border border-muted-foreground rounded"
                                 onValueChange={handleCodeChange}
+                                width="100%"
                             />
                             <Input
                                 type="hidden"
